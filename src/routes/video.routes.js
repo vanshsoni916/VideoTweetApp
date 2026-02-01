@@ -38,3 +38,5 @@ router.route("/c/:videoId").patch(
 router.route("/c/:videoId").delete(verifyJWT,deleteVideo)
 
 router.route("/c/:videoId/toggle_publish").patch(verifyJWT,togglePublishStatus)
+
+export default router
