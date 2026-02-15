@@ -220,9 +220,98 @@ const getAllLikedVideos = asyncHandler(async(req,res)=>{
            )
 })
 
+const getVideoLikeStatus = asyncHandler(async(req,res)=>{
+    const {videoId} = req.params
+    if(!isValidObjectId(videoId)){
+        throw new ApiError(400,"Invalid videoId")
+    }
+
+    const userId = req.user._id
+
+    const likeCount = await Like.countDocuments({video:videoId})
+
+    const existingLike = await Like.findOne({
+        video:videoId,
+        likedBy : userId
+    })
+
+    return res
+           .status(200)
+           .json(
+            new ApiResponse(
+                200,
+                {
+                    likes:likeCount,
+                    isLiked: existingLike
+                },
+                "Likes Count Fetched Successfully"
+            )
+           )
+})
+
+const getTweetLikeStatus = asyncHandler(async(req,res)=>{
+    const {tweetId} = req.params
+    if(!isValidObjectId(tweetId)){
+        throw new ApiError(400,"Invalid tweetId")
+    }
+
+    const userId = req.user._id
+
+    const likeCount = await Like.countDocuments({tweet:tweetId})
+
+    const existingLike = await Like.findOne({
+        tweet:tweetId,
+        likedBy : userId
+    })
+
+    return res
+           .status(200)
+           .json(
+            new ApiResponse(
+                200,
+                {
+                    likes:likeCount,
+                    isLiked: existingLike
+                },
+                "Likes Count Fetched Successfully"
+            )
+           )
+})
+
+const getCommentLikeStatus = asyncHandler(async(req,res)=>{
+    const {commentId} = req.params
+    if(!isValidObjectId(commentId)){
+        throw new ApiError(400,"Invalid commentId")
+    }
+
+    const userId = req.user._id
+
+    const likeCount = await Like.countDocuments({comment:commentId})
+
+    const existingLike = await Like.findOne({
+        comment:commentId,
+        likedBy : userId
+    })
+
+    return res
+           .status(200)
+           .json(
+            new ApiResponse(
+                200,
+                {
+                    likes:likeCount,
+                    isLiked: existingLike
+                },
+                "Likes Count Fetched Successfully"
+            )
+           )
+})
 export {
     toggleVideoLike,
     toggleTweetLike,
     toggleCommentLike,
-    getAllLikedVideos
+    getAllLikedVideos,
+    getCommentLikeStatus,
+    getTweetLikeStatus,
+    getVideoLikeStatus
 }
