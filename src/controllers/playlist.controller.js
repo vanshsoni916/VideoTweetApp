@@ -3,7 +3,7 @@ import { asyncHandler } from "../utils/asyncHandler.js"
 import mongoose, { isValidObjectId } from "mongoose";
 import { ApiResponse } from "../utils/ApiResponses.js"
 import { ApiError } from "../utils/ApiError.js"
-import { Video } from "../model/video.model";
+import { Video } from "../model/video.model.js";
 
 const createPlaylist = asyncHandler(async (req, res) => {
     const { name, description } = req.body;

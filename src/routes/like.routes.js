@@ -1,4 +1,4 @@
-import { verifyJWT } from "../middlewares/auth.middleware";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
 import {
     toggleVideoLike,
     toggleTweetLike,
@@ -9,7 +9,7 @@ import {
     getVideoLikeStatus
 } from "../controllers/like.controller.js"
 
-import {Router} from express 
+import {Router} from "express" 
 
 
 const router = Router()
