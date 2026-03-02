@@ -22,4 +22,6 @@ const likeSchema = new Schema(
     {timestamps:true}
 )
 
+likeSchema.index({video:1})
+
 export const Like = mongoose.model("Like",likeSchema)
