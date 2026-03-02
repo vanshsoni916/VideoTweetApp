@@ -4,7 +4,7 @@ import {asyncHandler} from "../utils/asyncHandler.js"
 import {Comment} from "../model/comment.model.js"
 import mongoose,{isValidObjectId} from "mongoose"
 
-
+//all controllers
 const getVideoComment = asyncHandler(async(req,res)=>{
     const {videoId} = req.params
     if(!isValidObjectId(videoId)){
@@ -160,4 +160,4 @@ export {
     addComment,
     updateComment,
     deleteComment
-}
+} 
