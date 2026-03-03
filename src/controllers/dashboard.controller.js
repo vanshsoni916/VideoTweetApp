@@ -1,7 +1,6 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponses.js";
-import {Subscriber} from "../model/subscription.model.js"
 import {Video} from "../model/video.model.js"
 import mongoose, { isValidObjectId } from "mongoose";
 
@@ -103,3 +102,77 @@ const getChannelStats = asyncHandler(async(req,res)=>{
             )
            )
 })
+
+const getAllVideosOfChannel = asyncHandler(async(req,res)=>{
+    //get all videos uploaded by the channel 
+    const {channelId}  = req.params
+    const {page=1,limit=10,query,sortBy,sortType,userId} =  req.query
+
+    if(!isValidObjectId(channelId)){
+        throw new ApiError(400,"Invalid channelId")
+    }
+
+    const matchStage = {
+        owner:new mongoose.Types.ObjectId(channelId)
+    }
+
+    if(query){
+        matchStage.title = {$regex :query,$options:"i"}
+    }
+
+    const sortStage = {}
+    if(sortBy){
+        sortStage[sortBy] = sortType==="asc"? 1:-1
+    }
+    else sortStage[sortBy] = -1
+
+    const skip = (Number(page)-1)*Number(limit)
+
+    const videos = await Video.aggregate([
+        {
+            $match:matchStage
+        },
+        {
+            $lookup :{
+                from:"likes",
+                localField:"_id",
+                foreignField:"video",
+                as:"likes"
+            }
+        },
+        {
+            $addFields:{
+                likeCount :{$size:"$likes"}
+            }
+        },
+        //project:
+        {
+            $project:{
+                title:1,
+                description:1,
+                thumbnail:1,
+                views:1,
+                createdAt:1,
+                likeCount:1
+            }
+        },
+        {$sort:sortStage},
+        {$skip:skip},
+        {$limit:Number(limit)}
+    ])
+
+    return res
+           .status(200)
+           .json(
+            new ApiResponse(
+                200,
+                videos,
+                "All videos fetched successfully"
+            )
+           )
+})
+
+export {
+    getChannelStats,
+    getAllVideosOfChannel
+}
