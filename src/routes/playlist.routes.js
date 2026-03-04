@@ -21,6 +21,6 @@ router.route("/:playlistId").delete(verifyJWT,deletePlaylist)
 router.route("/:playlistId").patch(verifyJWT,updatePlaylist)
 
 router.route("/:playlistId/videos/:videoId").patch(verifyJWT,addVideoToPlaylist)
-router.route("/:playlistId/videos/videoId").delete(verifyJWT,removeVideoFromPlaylist)
+router.route("/:playlistId/videos/:videoId").delete(verifyJWT,removeVideoFromPlaylist)
 
 export default router
