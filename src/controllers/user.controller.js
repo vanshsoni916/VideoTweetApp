@@ -240,14 +240,19 @@ const forgetPassword = asyncHandler(async(req,res)=>{
     }
 
     const otp = Math.floor(100000+Math.random()*900000).toString()
-
+   
     user.resetPasswordOtp = otp
     user.resetPasswordExpiry = Date.now()+4*60*1000//4 minutes
+    await user.save()
 
     await sendEmail({
         to:user.email,
         subject:"Reset Password OTP",
-        otp:`Your OTP is ${otp}`
+        html:`
+          <h2>Reset Password Otp</h2>
+          <p>Otp : <strong>${otp}</strong></p>
+          <p>This Otp is Valid For 4 minutes. </p>
+        `
     })
 
     return res
