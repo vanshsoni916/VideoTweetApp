@@ -4,7 +4,7 @@ import {
     changePassword, getCurrentUser, updateAccountDetails,
     updateUserAvatar, updateCoverImage,
     getuserChannelProfile,
-    getWatchHistory
+    getWatchHistory,forgetPassword,verifyOtp,resetPassword
 } from "../controllers/user.controller.js"
 
 import { upload } from "../middlewares/multer.middleware.js"
@@ -42,4 +42,8 @@ router.route("/cover-image").patch(
 
 router.route("/c/:username").get(verifyJWT,getuserChannelProfile)
 router.route("/history").get(verifyJWT,getWatchHistory)
+router.route("/forget-password").post(forgetPassword)
+router.route("/verify-otp").post(verifyOtp)
+router.route("/reset-password").post(resetPassword)
+
 export default router

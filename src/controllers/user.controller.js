@@ -5,6 +5,7 @@ import { uploadOnCloudinary } from '../utils/cloudinary.js'
 import { ApiResponse } from '../utils/ApiResponses.js'
 import jwt from "jsonwebtoken"
 import { v2 as cloudinary } from "cloudinary"
+import { sendEmail } from '../utils/sendEmail.js'
 
 const registerUser = asyncHandler(async (req, res) => {
     //key steps:
@@ -226,6 +227,94 @@ const changePassword = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, {}, "Password Changed Successfully"))
 })
 
+const forgetPassword = asyncHandler(async(req,res)=>{
+    const {email} = req.body
+
+    if(!email){
+        throw new ApiError(400,"Email is required")
+    }
+
+    const user = await User.findOne({email})
+    if(!user){
+        throw new ApiError(404,"User not Found")
+    }
+
+    const otp = Math.floor(100000+Math.random()*900000).toString()
+
+    user.resetPasswordOtp = otp
+    user.resetPasswordExpiry = Date.now()+4*60*1000//4 minutes
+
+    await sendEmail({
+        to:user.email,
+        subject:"Reset Password OTP",
+        otp:`Your OTP is ${otp}`
+    })
+
+    return res
+           .status(200)
+           .json(
+            new ApiResponse(
+                200,
+                {},
+                "OTP sent to email"
+            )
+           )
+})
+
+const verifyOtp = asyncHandler(async(req,res)=>{
+    const {email,otp}=req.body
+
+    const user =await User.findOne({
+        email,
+        resetPasswordOtp:otp,
+        resetPasswordExpiry:{$gt:Date.now()}
+    })
+
+    if(!user){
+        throw new ApiError(400,"Invalid or Expired Otp")
+    }
+
+    return res
+           .status(200)
+           .json(
+            new ApiResponse(
+                200,
+                {},
+                "OTP verified"
+            )
+           )
+})
+
+const resetPassword = asyncHandler(async(req,res)=>{
+    const {email,otp,newPassword} = req.body
+
+    const user = await User.findOne({
+        email,
+        resetPasswordOtp:otp,
+        resetPasswordExpiry:{$gt:Date.now()}
+    })
+
+    if(!user){
+        throw new ApiError(400,"Invalid or Expired Otp")
+    }
+
+    user.password = newPassword
+    user.resetPasswordExpiry=undefined
+    user.resetPasswordOtp = undefined
+
+    await user.save()
+
+    return res
+           .status(200)
+           .json(
+            new ApiResponse(
+                200,
+                {},
+                "Password reset Successful"
+            )
+           )
+})
+
 const getCurrentUser = asyncHandler(async (req, res) => {
     return res
         .status(200)
@@ -440,7 +529,10 @@ export {
     updateUserAvatar,
     updateCoverImage,
     getuserChannelProfile,
-    getWatchHistory
+    getWatchHistory,
+    forgetPassword,
+    verifyOtp,
+    resetPassword
 }
 
 
