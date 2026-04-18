@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js",
-    "start":"node --experimental-json-modules src/index.js"
+    "start": "node --experimental-json-modules src/index.js"
   },
   "keywords": [
     "JavaScript",
@@ -19,6 +19,7 @@
     "prettier": "^3.6.2"
   },
   "dependencies": {
+    "@elastic/elasticsearch": "^9.3.4",
     "bcrypt": "^6.0.0",
     "cloudinary": "^2.8.0",
     "cookie-parser": "^1.4.7",
