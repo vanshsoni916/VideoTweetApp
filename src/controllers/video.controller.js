@@ -35,8 +35,6 @@ const getAllVideos = asyncHandler(async (req, res) => {
         sortStage.createdAt = -1;
     }
 
-    const skip = (Number(page) - 1) * Number(limit)
-
     const videos = await Video.aggregate([
         {
             $match: matchStage
@@ -65,20 +63,21 @@ const getAllVideos = asyncHandler(async (req, res) => {
                 "owner.avatar.url": 1
             }
         },
-        { $sort: sortStage },
-        { $skip: skip },
-        { $limit: Number(limit) }
+        { $sort: sortStage }
     ])
+    
+    const options={
+        page:parseInt(page),
+        limit:parseInt(limit)
+    }
+
+    const result = await Video.aggregatePaginate(aggregate,options)
 
     return res
         .status(200)
         .json(new ApiResponse(
             200,
-            {
-                page: Number(page),
-                limit: Number(limit),
-                videos
-            },
+            result,
             "videos fetched succesfully"
         ))
 })
