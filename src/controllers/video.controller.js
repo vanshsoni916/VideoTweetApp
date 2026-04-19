@@ -71,7 +71,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
         limit:parseInt(limit)
     }
 
-    const result = await Video.aggregatePaginate(aggregate,options)
+    const result = await Video.aggregatePaginate(videos,options)
 
     return res
         .status(200)
