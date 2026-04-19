@@ -35,7 +35,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
         sortStage.createdAt = -1;
     }
 
-    const videos = await Video.aggregate([
+    const videos = Video.aggregate([
         {
             $match: matchStage
         },
