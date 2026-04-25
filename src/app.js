@@ -41,4 +41,4 @@ app.use("api/v1/dashboard",dashboardRouter)
 app.use("/api/v1/healthcheck",healthcheckRouter)
 
 
-export {app};
+export default app;
