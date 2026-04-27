@@ -12,9 +12,7 @@ const getVideoComment = asyncHandler(async(req,res)=>{
     }
     const {page=1,limit=10} = req.query
 
-    const skip = (Number(page)-1)*Number(limit)
-
-    const comments = await Comment.aggregate([
+    const comments =  Comment.aggregate([
         {
             $match:{
                 video:new mongoose.Types.ObjectId(videoId)
@@ -41,19 +39,23 @@ const getVideoComment = asyncHandler(async(req,res)=>{
             }
         },
         {$sort:{createdAt:-1}},
-        {$skip:skip},
-        {$limit:Number(limit)}
+        
     ])
     
+    const options={
+        page:parseInt(page),
+        limit:parseInt(limit)
+    }
+
+    const result = await Comment.aggregatePaginate(comments,options)
+
     return res
            .status(200)
            .json(
             new ApiResponse(
                 200,
                 {
-                    page:Number(page),
-                    limit:Number(limit),
-                    comments
+                    result
                 },
                 "Video Comments Fetched Successfully"
             )
