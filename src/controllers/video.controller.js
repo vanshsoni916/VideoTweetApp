@@ -83,7 +83,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
 })
 
 const publishAVideo = asyncHandler(async (req, res) => {
-    const { title, description } = req.body
+    const { title, description , isPublished} = req.body
     if (!title || !description) {
         throw new ApiError(400, "title and description are required")
     }
@@ -117,7 +117,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
             public_id: thumbnailFile.public_id
         },
         duration: videoFile.duration,
-        isPublished: true,
+        isPublished: isPublished==='true'?true:false,
         owner: req.user._id,
         views: 0
     })
